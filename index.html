@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ankit Fitness Diet</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+body {background:#0d0d0d;color:white;font-family:Arial;margin:0;}
+.header {background:#111;padding:15px;text-align:center;border-bottom:2px solid red;}
+.header h2 {color:red;margin:0;}
+
+.container {padding:15px;max-width:600px;margin:auto;}
+
+input {width:100%;padding:10px;margin:8px 0;background:#1c1c1c;color:white;border:none;border-radius:8px;}
+
+.btn {background:#1c1c1c;padding:12px;margin:5px 0;border-radius:8px;text-align:center;cursor:pointer;}
+.btn:hover {background:red;}
+
+.box {background:#1c1c1c;padding:12px;margin:10px 0;border-radius:8px;}
+
+button {width:100%;padding:12px;margin-top:10px;background:red;color:white;border:none;border-radius:8px;}
+.whatsapp {background:#25D366;}
+
+#result {background:#111;margin-top:15px;padding:10px;border-radius:8px;}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h2>Ankit Fitness Trainer</h2>
+<p>Glofit Gym Gurugram | 📞 8532068762</p>
+</div>
+
+<div class="container">
+
+<h3>Client Details</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+
+<h3>Select Goal</h3>
+<div class="btn" onclick="setGoal('Weight Loss')">Weight Loss</div>
+<div class="btn" onclick="setGoal('Fat Loss')">Fat Loss</div>
+<div class="btn" onclick="setGoal('Weight Gain')">Weight Gain</div>
+
+<div id="diet"></div>
+
+<button onclick="generate()">Generate Diet</button>
+<button class="whatsapp" onclick="send()">Send WhatsApp</button>
+<button onclick="downloadPDF()">Download PDF</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let goal="", finalMsg="";
+
+const data = {
+
+"Weight Loss":{
+"Empty Stomach":[
+"Green Tea (0 cal)",
+"Black Coffee (5 cal)",
+"Lemon Water (5 cal)",
+"Jeera Water (5 cal)"
+],
+"Breakfast":[
+"Oats + Curd (250 cal)",
+"Poha (220 cal)",
+"Upma (230 cal)",
+"Egg Whites + Oats (250 cal)",
+"Omelette (200 cal)",
+"Boiled Eggs (140 cal)"
+],
+"Lunch":[
+"Dal + Roti (350 cal)",
+"Khichdi (300 cal)",
+"Paneer + Salad (300 cal)",
+"Chicken + Salad (300 cal)",
+"Egg Curry + Roti (350 cal)"
+],
+"Snack":[
+"Green Tea + Chana (120 cal)",
+"Fruit Bowl (100 cal)",
+"Boiled Eggs (140 cal)",
+"Chicken Soup (150 cal)"
+],
+"Dinner":[
+"Roti + Sabzi (250 cal)",
+"Soup (150 cal)",
+"Paneer + Salad (250 cal)",
+"Grilled Chicken (220 cal)"
+]
+},
+
+"Fat Loss":{
+"Empty Stomach":[
+"Green Tea (0 cal)",
+"Black Coffee (5 cal)"
+],
+"Breakfast":[
+"Oats (250 cal)",
+"Sprouts (150 cal)",
+"Paneer (200 cal)",
+"Egg Whites (150 cal)"
+],
+"Lunch":[
+"Paneer + Salad (300 cal)",
+"Soyabean + Roti (350 cal)",
+"Chicken + Salad (300 cal)"
+],
+"Snack":[
+"Almonds (100 cal)",
+"Egg Whites (60 cal)",
+"Chicken Soup (150 cal)"
+],
+"Dinner":[
+"Soup (150 cal)",
+"Paneer + Salad (250 cal)",
+"Grilled Chicken (220 cal)"
+]
+},
+
+"Weight Gain":{
+"Empty Stomach":[
+"Banana + Peanut Butter (200 cal)",
+"Milk + Dates (250 cal)"
+],
+"Breakfast":[
+"Oats + Milk + Peanut Butter (400 cal)",
+"Paneer Paratha (450 cal)",
+"Eggs + Toast (400 cal)",
+"Banana Shake (450 cal)"
+],
+"Lunch":[
+"Dal + Rice + Ghee (600 cal)",
+"Paneer + Roti (500 cal)",
+"Chicken + Rice (600 cal)",
+"Egg Curry + Rice (500 cal)"
+],
+"Snack":[
+"Peanut Butter Sandwich (300 cal)",
+"Protein Shake (300 cal)",
+"Egg Sandwich (300 cal)"
+],
+"Dinner":[
+"Paneer + Roti (500 cal)",
+"Chicken + Roti (500 cal)",
+"Khichdi + Ghee (450 cal)"
+]
+}
+
+};
+
+function setGoal(g){goal=g;load();}
+
+function load(){
+if(!goal) return;
+
+let html="";
+let meals=data[goal];
+
+for(let m in meals){
+html+=`<div class="box"><b>${m}</b>`;
+meals[m].forEach(i=>{
+html+=`<label><input type="checkbox"> ${i}</label><br>`;
+});
+html+="</div>";
+}
+
+document.getElementById("diet").innerHTML=html;
+}
+
+function generate(){
+
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+
+if(!name || !phone || !goal){
+alert("Fill details + select goal");
+return;
+}
+
+let selected=document.querySelectorAll('input:checked');
+
+if(selected.length===0){
+alert("Select at least 1 option");
+return;
+}
+
+let html=`
+<h2>Ankit Fitness Trainer</h2>
+<p>Glofit Gym Gurugram | 8532068762</p>
+<hr>
+<p><b>Name:</b> ${name}</p>
+<p><b>Phone:</b> ${phone}</p>
+<p><b>Goal:</b> ${goal}</p>
+<hr>
+<h3>Diet Plan</h3>
+`;
+
+finalMsg=`Diet Plan\nName:${name}\nGoal:${goal}\n\n`;
+
+selected.forEach(i=>{
+let text=i.parentElement.innerText;
+html+=`<p>✔ ${text}</p>`;
+finalMsg+=`✔ ${text}\n`;
+});
+
+document.getElementById("result").innerHTML=html;
+}
+
+function send(){
+let phone=document.getElementById("phone").value;
+window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(finalMsg)}`);
+}
+
+function downloadPDF(){
+
+let element=document.getElementById("result");
+
+if(element.innerHTML.trim()===""){
+alert("Generate diet first");
+return;
+}
+
+element.style.background="white";
+element.style.color="black";
+
+html2pdf().from(element).save("DietPlan.pdf").then(()=>{
+element.style.background="#111";
+element.style.color="white";
+});
+
+}
+
+</script>
+
+</body>
+</html>
